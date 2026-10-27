@@ -10,14 +10,27 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as ApplyRouteImport } from './routes/apply'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ResultsRouteImport } from './routes/results'
+import { Route as StatusRouteImport } from './routes/status'
 import { Route as VoteRouteImport } from './routes/vote'
 import { Route as CandidateIdRouteImport } from './routes/candidate.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApplyRoute = ApplyRouteImport.update({
+  id: '/apply',
+  path: '/apply',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -28,6 +41,11 @@ const AuthRoute = AuthRouteImport.update({
 const ResultsRoute = ResultsRouteImport.update({
   id: '/results',
   path: '/results',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StatusRoute = StatusRouteImport.update({
+  id: '/status',
+  path: '/status',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VoteRoute = VoteRouteImport.update({
@@ -43,38 +61,75 @@ const CandidateIdRoute = CandidateIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/apply': typeof ApplyRoute
   '/auth': typeof AuthRoute
   '/results': typeof ResultsRoute
+  '/status': typeof StatusRoute
   '/vote': typeof VoteRoute
   '/candidate/$id': typeof CandidateIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/apply': typeof ApplyRoute
   '/auth': typeof AuthRoute
   '/results': typeof ResultsRoute
+  '/status': typeof StatusRoute
   '/vote': typeof VoteRoute
   '/candidate/$id': typeof CandidateIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
+  '/apply': typeof ApplyRoute
   '/auth': typeof AuthRoute
   '/results': typeof ResultsRoute
+  '/status': typeof StatusRoute
   '/vote': typeof VoteRoute
   '/candidate/$id': typeof CandidateIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/results' | '/vote' | '/candidate/$id'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/apply'
+    | '/auth'
+    | '/results'
+    | '/status'
+    | '/vote'
+    | '/candidate/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/results' | '/vote' | '/candidate/$id'
-  id: '__root__' | '/' | '/auth' | '/results' | '/vote' | '/candidate/$id'
+  to:
+    | '/'
+    | '/admin'
+    | '/apply'
+    | '/auth'
+    | '/results'
+    | '/status'
+    | '/vote'
+    | '/candidate/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/admin'
+    | '/apply'
+    | '/auth'
+    | '/results'
+    | '/status'
+    | '/vote'
+    | '/candidate/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
+  ApplyRoute: typeof ApplyRoute
   AuthRoute: typeof AuthRoute
   ResultsRoute: typeof ResultsRoute
+  StatusRoute: typeof StatusRoute
   VoteRoute: typeof VoteRoute
   CandidateIdRoute: typeof CandidateIdRoute
 }
@@ -86,6 +141,20 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/apply': {
+      id: '/apply'
+      path: '/apply'
+      fullPath: '/apply'
+      preLoaderRoute: typeof ApplyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -100,6 +169,13 @@ declare module '@tanstack/react-router' {
       path: '/results'
       fullPath: '/results'
       preLoaderRoute: typeof ResultsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/status': {
+      id: '/status'
+      path: '/status'
+      fullPath: '/status'
+      preLoaderRoute: typeof StatusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vote': {
@@ -121,8 +197,11 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
+  ApplyRoute: ApplyRoute,
   AuthRoute: AuthRoute,
   ResultsRoute: ResultsRoute,
+  StatusRoute: StatusRoute,
   VoteRoute: VoteRoute,
   CandidateIdRoute: CandidateIdRoute,
 }
