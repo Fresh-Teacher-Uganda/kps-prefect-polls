@@ -66,7 +66,7 @@ function ApplyPage() {
       ? await supabase.from("electoral_applications").update({ ...row, updated_at: new Date().toISOString() }).eq("id", existingId)
       : await supabase.from("electoral_applications").insert(row);
     setBusy(false);
-    if (error) return toast.error(error.message);
+    if (error) { toast.error(error.message); return; }
     toast.success(`Application for ${positionLabel(f.position)} submitted to the Electoral Commission.`);
     qc.invalidateQueries();
     nav({ to: "/status" });

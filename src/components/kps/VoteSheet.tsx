@@ -11,9 +11,9 @@ import { CandidatePhoto } from "./AppShell";
 
 type Props = {
   candidate: Candidate | null;
-  userId?: string;
+  userId: string | undefined;
   onClose: () => void;
-  onDone?: () => void;
+  onDone?: (() => void) | undefined;
 };
 
 export function VoteSheet({ candidate, userId, onClose, onDone }: Props) {

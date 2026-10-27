@@ -36,7 +36,7 @@ export function useUser() {
   return { user, ready };
 }
 
-export function useCandidates(refetchInterval?: number) {
+export function useCandidates(refetchInterval: number | false = false) {
   return useQuery({
     queryKey: ["candidates"],
     refetchInterval,
