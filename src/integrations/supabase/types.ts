@@ -14,16 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      electoral_applications: {
+        Row: {
+          age: number | null
+          class_name: string
+          created_at: string
+          experience: string | null
+          id: string
+          manifesto: string
+          photo_url: string | null
+          position: string
+          status: string
+          stream_name: string | null
+          student_name: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          age?: number | null
+          class_name: string
+          created_at?: string
+          experience?: string | null
+          id?: string
+          manifesto: string
+          photo_url?: string | null
+          position: string
+          status?: string
+          stream_name?: string | null
+          student_name: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          age?: number | null
+          class_name?: string
+          created_at?: string
+          experience?: string | null
+          id?: string
+          manifesto?: string
+          photo_url?: string | null
+          position?: string
+          status?: string
+          stream_name?: string | null
+          student_name?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      electoral_votes: {
+        Row: {
+          application_id: string
+          created_at: string
+          id: string
+          position: string
+          voter_id: string
+        }
+        Insert: {
+          application_id: string
+          created_at?: string
+          id?: string
+          position: string
+          voter_id: string
+        }
+        Update: {
+          application_id?: string
+          created_at?: string
+          id?: string
+          position?: string
+          voter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "electoral_votes_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "electoral_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_vote_counts: {
+        Args: never
+        Returns: {
+          application_id: string
+          votes: number
+        }[]
+      }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +260,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
