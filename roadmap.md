@@ -1,3 +1,3 @@
-- [ ] Change navigation branding to KPM.
-- [ ] Delete only identified sample election records.
-- [ ] Add loading placeholders to election screens and verify.
+- [x] Change navigation branding to KPM.
+- [x] Delete only identified sample election records.
+- [x] Add loading placeholders to election screens and verify.
