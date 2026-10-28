@@ -14,7 +14,7 @@ describe("positions", () => {
 
 describe("pupil emails", () => {
   it("uses first name @kpm.com", () => {
-    expect(pupilEmails()[0].email).toBe("wasswa@kpm.com");
+    expect(pupilEmails()[0]?.email).toBe("wasswa@kpm.com");
   });
   it("numbers repeated first names", () => {
     const e = pupilEmails().map((p) => p.email);
