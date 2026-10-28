@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Crest } from "@/components/kps/AppShell";
 import { useUser } from "@/hooks/use-electoral";
+import { isPupilEmail, pupilPassword } from "@/lib/electoral";
+import { ensurePupilAccount } from "@/lib/pupil-auth.functions";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -33,6 +35,14 @@ function AuthPage() {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setBusy(true);
+    const pupil = isPupilEmail(email);
+    if (pupil) {
+      try { await ensurePupilAccount({ data: { email } }); } catch (err) { setBusy(false); toast.error(String((err as Error).message)); return; }
+      const res = await supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password: pupilPassword(password) });
+      setBusy(false);
+      if (res.error) toast.error("Wrong password. The default pupil password is 6667.");
+      return;
+    }
     const res = mode === "in"
       ? await supabase.auth.signInWithPassword({ email, password })
       : await supabase.auth.signUp({ email, password, options: { emailRedirectTo: window.location.origin } });
@@ -56,7 +66,8 @@ function AuthPage() {
       <form onSubmit={submit} className="mt-8 space-y-3 rounded-3xl border-2 border-gold/50 bg-card p-6">
         <h2 className="font-display text-xl font-semibold">{mode === "in" ? "Sign in to vote" : "Create your account"}</h2>
         <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full rounded-xl border border-input bg-background/50 px-4 py-3 outline-none focus:border-gold" />
-        <input type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full rounded-xl border border-input bg-background/50 px-4 py-3 outline-none focus:border-gold" />
+        <input type="password" required minLength={4} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="w-full rounded-xl border border-input bg-background/50 px-4 py-3 outline-none focus:border-gold" />
+        <p className="text-xs text-muted-foreground">Pupils: use your first name, e.g. wasswa@kpm.com, with password 6667.</p>
         <button disabled={busy} className="w-full rounded-full bg-gold-gradient py-3 font-semibold text-primary-foreground disabled:opacity-60">
           {mode === "in" ? "Sign in" : "Sign up"}
         </button>
