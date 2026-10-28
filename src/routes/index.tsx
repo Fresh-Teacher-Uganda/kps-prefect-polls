@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { MapPin, Search } from "lucide-react";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
 import { useCandidates } from "@/hooks/use-electoral";
@@ -18,7 +19,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
-  const { data, isLoading } = useCandidates();
+  const { data, isLoading, error } = useCandidates();
   const [filter, setFilter] = useState("all");
   const [q, setQ] = useState("");
   const usedPositions = POSITIONS.filter((p) => data?.some((c) => c.position === p.value));
@@ -46,8 +47,9 @@ function Index() {
       </div>
 
       <div className="mt-4 space-y-5">
-        {isLoading && Array.from({ length: 3 }).map((_, i) => <div key={i} className="h-44 animate-pulse rounded-3xl border border-gold/30 bg-card" />)}
-        {!isLoading && list.length === 0 && <p className="py-10 text-center text-muted-foreground">No candidates found.</p>}
+        {isLoading && <ElectionSkeleton />}
+        {error && <p role="alert" className="py-10 text-center text-destructive">Unable to load candidates. Please try again.</p>}
+        {!isLoading && !error && list.length === 0 && <p className="py-10 text-center text-muted-foreground">No candidates found.</p>}
         {list.map((c) => (
           <Link
             key={c.id}

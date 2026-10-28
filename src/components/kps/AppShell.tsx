@@ -23,7 +23,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <Link to="/" className="flex items-center gap-3">
           <Crest />
           <div className="leading-tight">
-            <p className="font-display text-lg font-bold text-gold">KPS Elections 2026</p>
+            <p className="font-display text-lg font-bold text-gold">KPM Elections 2026</p>
             <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Action Not Words</p>
           </div>
         </Link>

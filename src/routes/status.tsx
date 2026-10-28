@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { Clock, CheckCircle2, XCircle, LogOut, ShieldCheck } from "lucide-react";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -28,13 +29,20 @@ const STATUS = {
 function StatusPage() {
   const { user, ready } = useUser();
   const { data: isAdmin } = useIsAdmin(user?.id);
-  const { data: app, isLoading } = useQuery({
+  const { data: app, isLoading, error } = useQuery({
     queryKey: ["my-application", user?.id],
     enabled: !!user,
-    queryFn: async () => (await supabase.from("electoral_applications").select("*").eq("user_id", user!.id).maybeSingle()).data,
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase.from("electoral_applications").select("*").eq("user_id", user.id).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
   });
 
   if (ready && !user) return <AppShell><Gate text="Sign in to see your application." /></AppShell>;
+  if (!ready || isLoading) return <AppShell><ElectionSkeleton detail /></AppShell>;
+  if (error) return <AppShell><p role="alert" className="mt-6 text-destructive">Unable to load your application. Please try again.</p></AppShell>;
   const s = app ? STATUS[app.status as keyof typeof STATUS] ?? STATUS.pending : null;
 
   return (
@@ -51,7 +59,7 @@ function StatusPage() {
         </Link>
       )}
 
-      {isLoading ? <div className="mt-6 h-60 animate-pulse rounded-3xl bg-card" /> : !app || !s ? (
+      {!app || !s ? (
         <div className="mt-6 rounded-3xl border-2 border-gold/50 bg-card p-8 text-center">
           <p className="font-display text-xl">You haven't applied yet.</p>
           <Link to="/apply" className="mt-5 block rounded-full bg-gold-gradient py-3 font-semibold text-primary-foreground">Apply for a position</Link>

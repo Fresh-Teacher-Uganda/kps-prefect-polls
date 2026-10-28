@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Crown, Radio } from "lucide-react";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
 import { useCandidates } from "@/hooks/use-electoral";
 import { POSITIONS } from "@/lib/electoral";
@@ -17,7 +18,7 @@ export const Route = createFileRoute("/results")({
 });
 
 function Results() {
-  const { data } = useCandidates(5000);
+  const { data, isLoading, error } = useCandidates(5000);
   const total = data?.reduce((s, c) => s + c.votes, 0) ?? 0;
   const positions = POSITIONS.filter((p) => data?.some((c) => c.position === p.value));
 
@@ -29,7 +30,10 @@ function Results() {
           <Radio className="h-3.5 w-3.5 animate-pulse" /> Live
         </span>
       </div>
-      <p className="mt-1 text-muted-foreground"><span className="font-semibold text-gold">{total.toLocaleString()}</span> votes cast so far</p>
+      {!isLoading && !error && <p className="mt-1 text-muted-foreground"><span className="font-semibold text-gold">{total.toLocaleString()}</span> votes cast so far</p>}
+      {isLoading && <ElectionSkeleton />}
+      {error && <p role="alert" className="mt-6 text-destructive">Unable to load results. Please try again.</p>}
+      {!isLoading && !error && positions.length === 0 && <p className="mt-6 text-muted-foreground">No approved candidates yet.</p>}
 
       <div className="mt-6 space-y-5">
         {positions.map((p) => {

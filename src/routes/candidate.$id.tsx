@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { ArrowLeft, ChevronRight, Heart, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
@@ -29,7 +30,7 @@ function CandidatePage() {
   const c = data?.find((x) => x.id === id);
   const voted = myVotes?.find((v) => v.position === c?.position);
 
-  if (isLoading) return <AppShell><div className="h-96 animate-pulse rounded-3xl bg-card" /></AppShell>;
+  if (isLoading) return <AppShell><ElectionSkeleton detail /></AppShell>;
   if (!c) return <AppShell><p className="py-20 text-center">Candidate not found.</p></AppShell>;
 
   const share = async () => {
