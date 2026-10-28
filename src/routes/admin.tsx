@@ -12,6 +12,8 @@ import { Gate } from "./apply";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Electoral Commission — KPS Elections 2026" },
       { name: "description", content: "Review and approve prefect candidate applications." },
       { property: "og:title", content: "KPS Electoral Commission" },

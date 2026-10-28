@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Camera, Check } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-electoral";
@@ -30,22 +31,35 @@ function ApplyPage() {
   const [busy, setBusy] = useState(false);
   const [existingId, setExistingId] = useState<string | null>(null);
   const [locked, setLocked] = useState(false);
+  const [loadedUserId, setLoadedUserId] = useState<string | null>(null);
+  const { data: application, isLoading, error } = useQuery({
+    queryKey: ["my-application", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      if (!user) return null;
+      const { data, error } = await supabase.from("electoral_applications").select("*").eq("user_id", user.id).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
   const [f, setF] = useState({ student_name: "", class_name: "", stream_name: "", age: "", position: "", experience: "", manifesto: "", photo_url: "" });
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
 
   useEffect(() => {
-    if (!user) return;
-    supabase.from("electoral_applications").select("*").eq("user_id", user.id).maybeSingle().then(({ data }) => {
-      if (!data) return;
-      setExistingId(data.id);
-      setLocked(data.status !== "pending");
-      setF({ student_name: data.student_name, class_name: data.class_name, stream_name: data.stream_name ?? "", age: data.age ? String(data.age) : "", position: data.position, experience: data.experience ?? "", manifesto: data.manifesto, photo_url: data.photo_url ?? "" });
-    });
-  }, [user]);
+    if (!user || application === undefined) return;
+    if (application) {
+      setExistingId(application.id);
+      setLocked(application.status !== "pending");
+      setF({ student_name: application.student_name, class_name: application.class_name, stream_name: application.stream_name ?? "", age: application.age ? String(application.age) : "", position: application.position, experience: application.experience ?? "", manifesto: application.manifesto, photo_url: application.photo_url ?? "" });
+    }
+    setLoadedUserId(user.id);
+  }, [user, application]);
 
   if (ready && !user) {
     return <AppShell><Gate text="Sign in to apply as a candidate." /></AppShell>;
   }
+  if (error) return <AppShell><p role="alert" className="mt-6 text-destructive">Unable to load your application. Please try again.</p></AppShell>;
+  if (!ready || isLoading || loadedUserId !== user?.id) return <AppShell><ElectionSkeleton detail /></AppShell>;
   if (locked) {
     return <AppShell><Gate text="Your application has already been reviewed." to="/status" cta="View my application" /></AppShell>;
   }

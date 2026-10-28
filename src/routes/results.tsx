@@ -8,6 +8,8 @@ import { POSITIONS } from "@/lib/electoral";
 export const Route = createFileRoute("/results")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Live Results — KPS Elections 2026" },
       { name: "description", content: "Live vote tallies for every Kyengera Parents School prefect position." },
       { property: "og:title", content: "KPS Live Election Results" },

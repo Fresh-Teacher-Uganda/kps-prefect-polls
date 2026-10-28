@@ -11,6 +11,8 @@ import { Gate } from "./apply";
 export const Route = createFileRoute("/status")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "My Application — KPS Elections 2026" },
       { name: "description", content: "Track the status of your prefect candidate application." },
       { property: "og:title", content: "KPS Application Status" },

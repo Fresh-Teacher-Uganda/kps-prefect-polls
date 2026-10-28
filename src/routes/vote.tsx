@@ -10,6 +10,8 @@ import { POSITIONS } from "@/lib/electoral";
 export const Route = createFileRoute("/vote")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Ballot — KPS Elections 2026" },
       { name: "description", content: "Cast your ballot for each prefect position at Kyengera Parents School." },
       { property: "og:title", content: "KPS Prefect Ballot" },
