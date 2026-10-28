@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { Check, ChevronRight, Lock } from "lucide-react";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
 import { VoteSheet } from "@/components/kps/VoteSheet";
@@ -9,6 +10,8 @@ import { POSITIONS } from "@/lib/electoral";
 export const Route = createFileRoute("/vote")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Ballot — KPS Elections 2026" },
       { name: "description", content: "Cast your ballot for each prefect position at Kyengera Parents School." },
       { property: "og:title", content: "KPS Prefect Ballot" },
@@ -20,8 +23,8 @@ export const Route = createFileRoute("/vote")({
 
 function VotePage() {
   const { user, ready } = useUser();
-  const { data: candidates } = useCandidates();
-  const { data: myVotes } = useMyVotes(user?.id);
+  const { data: candidates, isLoading: candidatesLoading, error: candidatesError } = useCandidates();
+  const { data: myVotes, isLoading: votesLoading, error: votesError } = useMyVotes(user?.id);
   const [active, setActive] = useState<string | null>(null);
   const [pick, setPick] = useState<Candidate | null>(null);
 
@@ -42,11 +45,14 @@ function VotePage() {
   }
 
   const current = positions.find((p) => p.value === active);
+  if (!ready || candidatesLoading || votesLoading) return <AppShell><h1 className="mt-2 font-display text-3xl font-bold">Your ballot</h1><ElectionSkeleton /></AppShell>;
+  if (candidatesError || votesError) return <AppShell><p role="alert" className="mt-6 text-destructive">Unable to load your ballot. Please try again.</p></AppShell>;
 
   return (
     <AppShell>
       <h1 className="mt-2 font-display text-3xl font-bold">Your ballot</h1>
       <p className="mt-1 text-muted-foreground">{done} of {positions.length} positions voted</p>
+      {positions.length === 0 && <p className="mt-6 text-muted-foreground">No approved candidates yet.</p>}
       <div className="mt-3 h-2 overflow-hidden rounded-full bg-card">
         <div className="h-full bg-gold-gradient transition-all" style={{ width: `${positions.length ? (done / positions.length) * 100 : 0}%` }} />
       </div>

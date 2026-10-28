@@ -41,11 +41,12 @@ export function useCandidates(refetchInterval: number | false = false) {
     queryKey: ["candidates"],
     refetchInterval,
     queryFn: async (): Promise<Candidate[]> => {
-      const [{ data: apps, error }, { data: counts }] = await Promise.all([
+       const [{ data: apps, error }, { data: counts, error: countsError }] = await Promise.all([
         supabase.from("electoral_applications").select("*").eq("status", "approved"),
         supabase.rpc("get_vote_counts"),
       ]);
       if (error) throw error;
+       if (countsError) throw countsError;
       const map = new Map((counts ?? []).map((c) => [c.application_id, Number(c.votes)]));
       return (apps ?? [])
         .map((a) => ({ ...a, votes: map.get(a.id) ?? 0 }))
@@ -71,7 +72,9 @@ export function useIsAdmin(userId?: string) {
     queryKey: ["is-admin", userId],
     enabled: !!userId,
     queryFn: async () => {
-      const { data } = await supabase.rpc("has_role", { _user_id: userId!, _role: "admin" });
+      if (!userId) return false;
+      const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
+      if (error) throw error;
       return !!data;
     },
   });

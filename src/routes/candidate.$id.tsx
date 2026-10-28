@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { ArrowLeft, ChevronRight, Heart, Share2 } from "lucide-react";
 import { toast } from "sonner";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
@@ -10,6 +11,8 @@ import { positionLabel } from "@/lib/electoral";
 export const Route = createFileRoute("/candidate/$id")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Candidate details — KPS Elections 2026" },
       { name: "description", content: "Read this candidate's manifesto and vote in the Kyengera Parents School prefect elections." },
       { property: "og:title", content: "KPS Prefect Candidate" },
@@ -29,7 +32,7 @@ function CandidatePage() {
   const c = data?.find((x) => x.id === id);
   const voted = myVotes?.find((v) => v.position === c?.position);
 
-  if (isLoading) return <AppShell><div className="h-96 animate-pulse rounded-3xl bg-card" /></AppShell>;
+  if (isLoading) return <AppShell><ElectionSkeleton detail /></AppShell>;
   if (!c) return <AppShell><p className="py-20 text-center">Candidate not found.</p></AppShell>;
 
   const share = async () => {

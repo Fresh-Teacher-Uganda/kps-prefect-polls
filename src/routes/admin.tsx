@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { toast } from "sonner";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +12,8 @@ import { Gate } from "./apply";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Electoral Commission — KPS Elections 2026" },
       { name: "description", content: "Review and approve prefect candidate applications." },
       { property: "og:title", content: "KPS Electoral Commission" },
@@ -26,14 +29,20 @@ function AdminPage() {
   const { data: isAdmin, isLoading: roleLoading } = useIsAdmin(user?.id);
   const qc = useQueryClient();
   const [tab, setTab] = useState("pending");
-  const { data } = useQuery({
+  const { data, isLoading: appsLoading, error } = useQuery({
     queryKey: ["admin-apps"],
     enabled: !!isAdmin,
-    queryFn: async () => (await supabase.from("electoral_applications").select("*").order("created_at", { ascending: false })).data ?? [],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("electoral_applications").select("*").order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
   });
 
   if (ready && !user) return <AppShell><Gate text="Sign in as the Electoral Commission." /></AppShell>;
   if (!roleLoading && user && !isAdmin) return <AppShell><p className="mt-16 text-center text-muted-foreground">Only the Electoral Commission can open this page.</p></AppShell>;
+  if (!ready || roleLoading || appsLoading) return <AppShell><ElectionSkeleton /></AppShell>;
+  if (error) return <AppShell><p role="alert" className="mt-6 text-destructive">Unable to load applications. Please try again.</p></AppShell>;
 
   async function setStatus(id: string, status: string) {
     const { error } = await supabase.from("electoral_applications").update({ status }).eq("id", id);

@@ -9,6 +9,8 @@ import { useUser } from "@/hooks/use-electoral";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { title: "Sign in — KPS Elections 2026" },
       { name: "description", content: "Sign in to vote or apply in the Kyengera Parents School prefect elections." },
       { property: "og:title", content: "Sign in — KPS Elections" },
