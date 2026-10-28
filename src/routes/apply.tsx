@@ -50,7 +50,7 @@ function ApplyPage() {
     if (application) {
       setExistingId(application.id);
       setLocked(application.status !== "pending");
-      setF({ student_name: application.student_name, class_name: application.class_name, stream_name: application.stream_name ?? "", age: application.age ? String(application.age) : "", position: application.position, experience: application.experience ?? "", manifesto: application.manifesto, photo_url: application.photo_url ?? "" });
+      setF({ student_name: application.student_name, class_name: APPLY_CLASS, stream_name: APPLY_STREAM, age: application.age ? String(application.age) : "", position: application.position, experience: application.experience ?? "", manifesto: application.manifesto, photo_url: application.photo_url ?? "" });
     }
     setLoadedUserId(user.id);
   }, [user, application]);

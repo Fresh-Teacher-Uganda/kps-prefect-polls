@@ -51,7 +51,12 @@ function Index() {
       <div className="mt-4 space-y-5">
         {isLoading && <ElectionSkeleton />}
         {error && <p role="alert" className="py-10 text-center text-destructive">Unable to load candidates. Please try again.</p>}
-        {!isLoading && !error && list.length === 0 && <p className="py-10 text-center text-muted-foreground">No candidates found.</p>}
+        {!isLoading && !error && list.length === 0 && (
+          <div className="flex flex-col items-center gap-4 py-10 text-center">
+            <p className="text-muted-foreground">No candidates available yet</p>
+            <Link to="/apply" className="rounded-full bg-gold-gradient px-6 py-3 font-semibold text-primary-foreground shadow-gold">Apply as a candidate</Link>
+          </div>
+        )}
         {list.map((c) => (
           <Link
             key={c.id}
