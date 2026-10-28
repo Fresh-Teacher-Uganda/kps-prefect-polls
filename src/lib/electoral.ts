@@ -29,7 +29,7 @@ export const PUPIL_DOMAIN = "kpm.com";
 export function pupilEmails(): { name: string; email: string }[] {
   const seen = new Map<string, number>();
   return PUPILS.map((name) => {
-    const first = name.split(/\s+/)[0].toLowerCase().replace(/[^a-z]/g, "");
+    const first = (name.split(/\s+/)[0] ?? "").toLowerCase().replace(/[^a-z]/g, "");
     const n = (seen.get(first) ?? 0) + 1;
     seen.set(first, n);
     return { name, email: `${first}${n > 1 ? n : ""}@${PUPIL_DOMAIN}` };
