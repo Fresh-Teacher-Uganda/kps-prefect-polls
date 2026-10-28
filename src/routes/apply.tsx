@@ -7,7 +7,7 @@ import { ElectionSkeleton } from "@/components/kps/ElectionSkeleton";
 import { AppShell, CandidatePhoto } from "@/components/kps/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 import { useUser } from "@/hooks/use-electoral";
-import { CLASSES, STREAMS, fileToSmallDataUrl, positionLabel, positionsForClass } from "@/lib/electoral";
+import { APPLY_CLASS, APPLY_STREAM, PUPILS, fileToSmallDataUrl, positionLabel, positionsForClass } from "@/lib/electoral";
 
 export const Route = createFileRoute("/apply")({
   head: () => ({
@@ -42,7 +42,7 @@ function ApplyPage() {
       return data;
     },
   });
-  const [f, setF] = useState({ student_name: "", class_name: "", stream_name: "", age: "", position: "", experience: "", manifesto: "", photo_url: "" });
+  const [f, setF] = useState({ student_name: "", class_name: APPLY_CLASS, stream_name: APPLY_STREAM, age: "", position: "", experience: "", manifesto: "", photo_url: "" });
   const set = (k: keyof typeof f, v: string) => setF((p) => ({ ...p, [k]: v }));
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function ApplyPage() {
     if (application) {
       setExistingId(application.id);
       setLocked(application.status !== "pending");
-      setF({ student_name: application.student_name, class_name: application.class_name, stream_name: application.stream_name ?? "", age: application.age ? String(application.age) : "", position: application.position, experience: application.experience ?? "", manifesto: application.manifesto, photo_url: application.photo_url ?? "" });
+      setF({ student_name: application.student_name, class_name: APPLY_CLASS, stream_name: APPLY_STREAM, age: application.age ? String(application.age) : "", position: application.position, experience: application.experience ?? "", manifesto: application.manifesto, photo_url: application.photo_url ?? "" });
     }
     setLoadedUserId(user.id);
   }, [user, application]);
@@ -111,14 +111,13 @@ function ApplyPage() {
               <span className="text-xs text-muted-foreground">Add your photo</span>
               <input type="file" accept="image/*" className="hidden" onChange={async (e) => { const file = e.target.files?.[0]; if (file) set("photo_url", await fileToSmallDataUrl(file)); }} />
             </label>
-            <input className={input} placeholder="Full name" value={f.student_name} onChange={(e) => set("student_name", e.target.value)} />
+            <select aria-label="Your name" className={input} value={f.student_name} onChange={(e) => set("student_name", e.target.value)}>
+              <option value="">Choose your name</option>
+              {PUPILS.map((n) => <option key={n}>{n}</option>)}
+            </select>
             <div className="grid grid-cols-3 gap-3">
-              <select className={input} value={f.class_name} onChange={(e) => { set("class_name", e.target.value); set("position", ""); }}>
-                <option value="">Class</option>{CLASSES.map((c) => <option key={c}>{c}</option>)}
-              </select>
-              <select className={input} value={f.stream_name} onChange={(e) => set("stream_name", e.target.value)}>
-                <option value="">Stream</option>{STREAMS.map((s) => <option key={s}>{s}</option>)}
-              </select>
+              <input aria-label="Class" disabled value={APPLY_CLASS} className={`${input} cursor-not-allowed opacity-60`} />
+              <input aria-label="Stream" disabled value={APPLY_STREAM} className={`${input} cursor-not-allowed opacity-60`} />
               <input className={input} type="number" min={5} max={16} placeholder="Age" value={f.age} onChange={(e) => set("age", e.target.value)} />
             </div>
           </>

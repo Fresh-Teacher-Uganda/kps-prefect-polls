@@ -8,6 +8,11 @@ export type Position = {
 export const CLASSES = ["P1", "P2", "P3", "P4", "P5", "P6", "P7"];
 export const STREAMS = ["Blue", "Red", "Green", "Yellow"];
 
+/** Only P.5 Orange pupils may apply for prefectship. */
+export const APPLY_CLASS = "P.5";
+export const APPLY_STREAM = "Orange";
+export const PUPILS = ["Wasswa Hardy", "Buyondo Trinity", "Nabunya Joweria", "Abigaba Chloe", "Ssuubi Jordan", "Kato Harry", "Ayella James", "Nandutu Norah", "Liam Desmond", "Muyimbwa Rauben", "Kaliisa Warren", "Ssetaba Benson", "Balekere Garrisone", "Bulondo Victa Auther", "Nattabi Mary Hana", "Mukiibi Nicolas", "Kisozi Hisham", "Lukwago Awathi Fashan", "Namukwaya Brenda", "Nakabiito Jemimah", "Ntambaazi Shawna G", "Nakato Barbrah", "Aheirwe Marilyne Buki", "Nakirijja Precious", "Nalutaaya Noeline", "Muchunguzi Adrian", "Ntege Aiden", "Babirye Brenda", "Nansimbi Brianah", "Aisu Daniel", "Ainebyona Isaac", "Luzige Spencer", "Namugwanya Gabriella", "Amuli Elyom Morison", "Naluganzi Teopista", "Mpologoma Radia", "Ssemanda Shakim", "Mwesigwa Gabriel", "Nanyange Tara", "Nsubuga Isiah", "Nagayi Bahira", "Mirembe Desire", "Lukwago Mario", "Muwanga Benard", "Nabaggala Kayla", "Mutenza Shaban", "Nakigozi Promise", "Bugembe Anthony", "Nsereko Shawn", "Natukunda Shaneez", "Asiimwe Abra"];
+
 export const POSITIONS: Position[] = [
   { value: "head_prefect", label: "Head Prefect", description: "Lead the entire student body and represent students to school administration", eligibleClasses: ["P5", "P6"] },
   { value: "academic_prefect", label: "Academic Prefect", description: "Oversee academic activities and support student learning initiatives", eligibleClasses: ["P5", "P6"] },
@@ -30,7 +35,7 @@ export function positionLabel(value: string) {
 }
 
 export function positionsForClass(className: string) {
-  return POSITIONS.filter((p) => p.eligibleClasses.includes(className));
+  return POSITIONS.filter((p) => p.eligibleClasses.includes(className.replace(".", "")));
 }
 
 export function initials(name: string) {
